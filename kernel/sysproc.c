@@ -123,7 +123,16 @@ sys_getprocs(void){
 
 int
 sys_setpri(void){
-  return 0;
+    int pri = NULL;
+    argint(0, &pri); //get argument from user side
+    
+    if(!pri || (pri > 2) || (pri < 1)){
+        return -1; //incorrect priority input
+    }
+    
+    proc->priority = pri;
+    
+    return 0;
 }
 
 int
