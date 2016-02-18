@@ -5,6 +5,14 @@
 #include "mmu.h"
 #include "proc.h"
 #include "sysfunc.h"
+#include "spinlock.h"
+#include "pstat.h"
+
+
+struct {
+  struct spinlock lock;
+  struct proc proc[NPROC];
+} ptable;
 
 int
 sys_fork(void)
@@ -87,4 +95,38 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+
+
+
+//P1 a - system call that returns the number of processes in the system
+
+int
+sys_getprocs(void){
+
+  struct proc *p;
+  int countProcs = 0;
+
+  acquire(&ptable.lock);
+  
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if(p->state != UNUSED){
+      countProcs++;
+    }
+  }
+  release(&ptable.lock);
+  return countProcs;
+
+}
+
+int
+sys_setpri(void){
+  return 0;
+}
+
+int
+sys_getpinfo(void){
+  return 0;
 }
