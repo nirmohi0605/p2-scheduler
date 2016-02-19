@@ -45,6 +45,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 1; //default to low priority
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -252,6 +253,56 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+// void
+// scheduler(void)
+// {
+//   struct proc *p;
+
+//   for(;;){
+//     // Enable interrupts on this processor.
+//     sti();
+//     int highPriorityProcs = 0;
+//     // Loop over process table looking for process to run.
+//     acquire(&ptable.lock);
+//     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+//       if(p->state != RUNNABLE){
+//         continue;
+//       }
+//       if(p->priority == 2){
+//         highPriorityProcs = 1;
+//       }
+//     }
+
+//     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+//       if(p->state != RUNNABLE || highPriorityProcs && p->priority == 1){
+//         continue;
+//       }
+//       // Switch to chosen process.  It is the process's job
+//       // to release ptable.lock and then reacquire it
+//       // before jumping back to us.
+//       proc = p;
+//       switchuvm(p);
+//       p->state = RUNNING;
+
+//       if(p->priority == 1){
+//         p->lticks++;
+//       }else if(p->priority == 0){
+//         p->hticks++;
+//       }
+//       swtch(&cpu->scheduler, proc->context);
+//       switchkvm();
+
+//       // Process is done running for now.
+//       // It should have changed its p->state before coming back.
+//       proc = 0;
+//     }
+      
+    
+//     release(&ptable.lock);
+
+//   }
+// }
+
 void
 scheduler(void)
 {
@@ -260,12 +311,29 @@ scheduler(void)
   for(;;){
     // Enable interrupts on this processor.
     sti();
+    
+    int foundHi = 0;
+    
+
+    acquire(&ptable.lock);
+    // loop over ptable and check to see if any are high
+    // priority
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE) {
+        continue;
+      }
+      if(p->priority == 2) {
+  foundHi = 1;
+      }
+    }
 
     // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
+    // If there are high priorityority processes, then run those.
+    // Else, run anything that is runnable
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
+      if(p->state != RUNNABLE || (foundHi && p->priority == 1)) {
         continue;
+      }
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
@@ -273,12 +341,20 @@ scheduler(void)
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
+      //update hi/lo ticks
+      if(p->priority == 1) {
+  p->lticks++;
+      } else if(p->priority == 2) {
+  p->hticks++;
+      }
+
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
 
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       proc = 0;
+
     }
     release(&ptable.lock);
 

@@ -229,15 +229,15 @@ ld  -m    elf_i386 -nostdlib --omagic \
 dd if=/dev/zero of=xv6.img count=10000
 10000+0 records in
 10000+0 records out
-5120000 bytes (5.1 MB) copied, 0.0109409 s, 468 MB/s
+5120000 bytes (5.1 MB) copied, 0.0116232 s, 440 MB/s
 dd if=kernel/bootblock of=xv6.img conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes (512 B) copied, 6.7982e-05 s, 7.5 MB/s
+512 bytes (512 B) copied, 8.4392e-05 s, 6.1 MB/s
 dd if=kernel/kernel of=xv6.img seek=1 conv=notrunc
 272+1 records in
 272+1 records out
-139701 bytes (140 kB) copied, 0.000275786 s, 507 MB/s
+139773 bytes (140 kB) copied, 0.000294988 s, 474 MB/s
 gcc -c  -iquote include -Wall -ggdb  -o tools/mkfs.o tools/mkfs.c
 gcc  tools/mkfs.o -o tools/mkfs
 mkdir -p fs
@@ -372,10 +372,10 @@ $ tester
 tester
 
  **** PInfo **** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-Should print 1 then 2
+pid: 1 hticks: 0 lticks: 18
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 0 lticks: 9
+Should print 1 then 2$ 
 
 test getpinfo PASSED (10 of 10)
  (call getpinfo() from a user program 
@@ -429,7 +429,7 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-Should print 1 then 2
+Should print 1 then 2$ 
 
 test setpri PASSED (10 of 10)
  (call setpri() from a user program 
@@ -487,16 +487,16 @@ $ tester
 tester
 
 **** PInfo ****
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
-pid: 5 hticks: 0 lticks: 0
-pid: 6 hticks: 0 lticks: 0
-pid: 7 hticks: 0 lticks: 0
-pid: 8 hticks: 0 lticks: 0
-pid: 9 hticks: 0 lticks: 0
-pid: 10 hticks: 0 lticks: 0
+pid: 1 hticks: 0 lticks: 16
+pid: 2 hticks: 0 lticks: 20
+pid: 3 hticks: 0 lticks: 82
+pid: 4 hticks: 0 lticks: 73
+pid: 5 hticks: 0 lticks: 73
+pid: 6 hticks: 0 lticks: 73
+pid: 7 hticks: 0 lticks: 73
+pid: 8 hticks: 0 lticks: 73
+pid: 9 hticks: 0 lticks: 72
+pid: 10 hticks: 0 lticks: 72
 Number of processes in use 10
 Should print 1 then 2
 
@@ -556,16 +556,14 @@ $ tester
 tester
 
  **** PInfo **** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-user/tester.c:42 check (defaultpriorityrun == 1) failed: getpinfo should return a process having run with default priority
-$ 
+pid: 1 hticks: 0 lticks: 17
+pid: 2 hticks: 0 lticks: 20
+pid: 3 hticks: 0 lticks: 104
+Should print 1 then 2
 
-test default_priority FAILED (0 of 20)
+test default_priority PASSED (20 of 20)
  (check default priority set for processes by measuring hticks 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/default_priority.c)
- tester failed
 
 starting check_hticks
 
@@ -619,21 +617,19 @@ $ tester
 tester
 
  **** PInfo Before**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
+pid: 1 hticks: 0 lticks: 17
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 0 lticks: 11
 
  **** PInfo After**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-user/tester.c:62 check (highpriority == 1) failed: getpinfo should return 1 process with hticks greater than 0
-$ 
+pid: 1 hticks: 0 lticks: 17
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 468 lticks: 11
+Should print 1 then 2
 
-test check_hticks FAILED (0 of 20)
+test check_hticks PASSED (20 of 20)
  (check if hticks being incremented for high priority process 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/check_hticks.c)
- tester failed
 
 starting change_priority
 
@@ -687,21 +683,29 @@ $ tester
 tester
 
  ****PInfo before**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
+pid: 1 hticks: 0 lticks: 18
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 0 lticks: 12
 
  ****PInfo after**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-user/tester.c:60 check (highpriorityrun == 1) failed: Expected process to have run in high priority mode once priority changed to high
-$ 
+pid: 1 hticks: 0 lticks: 18
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 468 lticks: 12
 
-test change_priority FAILED (0 of 20)
+ ****PInfo before**** 
+pid: 1 hticks: 0 lticks: 18
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 468 lticks: 12
+
+ ****PInfo after**** 
+pid: 1 hticks: 0 lticks: 18
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 468 lticks: 480
+Should print 1 then 2
+
+test change_priority PASSED (20 of 20)
  (check if hticks and lticks being incremented as expected when the priority is changed back and forth 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/change_priority.c)
- tester failed
 
 starting run_high_priority
 
@@ -755,16 +759,22 @@ $ tester
 tester
 
  ****PInfo before**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
- then 2$ 
+pid: 1 hticks: 0 lticks: 17
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 0 lticks: 12
+pid: 4 hticks: 0 lticks: 1
 
-test run_high_priority FAILED (0 of 20)
+ ****PInfo after**** 
+pid: 1 hticks: 0 lticks: 17
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 0 lticks: 12
+pid: 4 hticks: 960 lticks: 1
+Should print 1 then 2zombie!
+$ 
+
+test run_high_priority PASSED (20 of 20)
  (check no low priority processes are running when there is high priority 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/run_high_priority.c)
- tester failed
 
 starting sleep_high_priority
 
@@ -818,23 +828,21 @@ $ tester
 tester
 
  ****PInfo before**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
+pid: 1 hticks: 0 lticks: 16
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 0 lticks: 111
+pid: 4 hticks: 0 lticks: 100
 
  ****PInfo after**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
-user/tester.c:69 check (lowpriorityrun == 1) failed: Expected low priority process to have run when high priority process was put to sleep
-$ 
+pid: 1 hticks: 0 lticks: 16
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 500 lticks: 111
+pid: 4 hticks: 0 lticks: 600
+Should print 1 then 2$ 
 
-test sleep_high_priority FAILED (0 of 20)
+test sleep_high_priority PASSED (20 of 20)
  (check if low priority processes run when high priority is put to sleep 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/sleep_high_priority.c)
- tester failed
 
 starting awake_high_priority
 
@@ -888,27 +896,23 @@ $ tester
 tester
 
  ****PInfo before**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
-pid: 5 hticks: 0 lticks: 0
- then 2
- ****PInfo after**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
-pid: 5 hticks: 0 lticks: 0
-user/tester.c:75 check (highpriorityrun == 1) failed: Expected one high priority process to run once it is awake
-zombie!
-zombie!
-$ 
+pid: 1 hticks: 0 lticks: 17
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 200 lticks: 11
+pid: 4 hticks: 0 lticks: 200
+pid: 5 hticks: 0 lticks: 200
 
-test awake_high_priority FAILED (0 of 20)
+ ****PInfo after**** 
+pid: 1 hticks: 0 lticks: 17
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 1162 lticks: 11
+pid: 4 hticks: 0 lticks: 200
+pid: 5 hticks: 0 lticks: 200
+Should print 1 then 2
+
+test awake_high_priority PASSED (20 of 20)
  (check if only high priority process run when high priority is awake from sleep 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/awake_high_priority.c)
- tester failed
 
 starting multiple_high_priority
 
@@ -962,27 +966,23 @@ $ tester
 tester
 
  ****PInfo before**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
-pid: 5 hticks: 0 lticks: 0
+pid: 1 hticks: 0 lticks: 16
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 200 lticks: 11
+pid: 4 hticks: 199 lticks: 1
+pid: 5 hticks: 0 lticks: 200
 
  ****PInfo after**** 
-pid: 1 hticks: 0 lticks: 0
-pid: 2 hticks: 0 lticks: 0
-pid: 3 hticks: 0 lticks: 0
-pid: 4 hticks: 0 lticks: 0
-pid: 5 hticks: 0 lticks: 0
-user/tester.c:78 check (highpriorityrun == 2) failed: Expected two high priority processes to be run
- then 2zombie!
-zombie!
-$ 
+pid: 1 hticks: 0 lticks: 16
+pid: 2 hticks: 0 lticks: 19
+pid: 3 hticks: 680 lticks: 11
+pid: 4 hticks: 679 lticks: 1
+pid: 5 hticks: 0 lticks: 200
+Should print 1 then 2
 
-test multiple_high_priority FAILED (0 of 20)
+test multiple_high_priority PASSED (20 of 20)
  (check if multiple high priority processes run in round robin 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/multiple_high_priority.c)
- tester failed
 
 **********************************************************************
 Summary:
@@ -1001,41 +1001,34 @@ test processesinuse PASSED (20 of 20)
  (check number of processes in use by calling getpinfo() 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/processesinuse.c)
 
-test default_priority FAILED (0 of 20)
+test default_priority PASSED (20 of 20)
  (check default priority set for processes by measuring hticks 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/default_priority.c)
- tester failed
 
-test check_hticks FAILED (0 of 20)
+test check_hticks PASSED (20 of 20)
  (check if hticks being incremented for high priority process 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/check_hticks.c)
- tester failed
 
-test change_priority FAILED (0 of 20)
+test change_priority PASSED (20 of 20)
  (check if hticks and lticks being incremented as expected when the priority is changed back and forth 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/change_priority.c)
- tester failed
 
-test run_high_priority FAILED (0 of 20)
+test run_high_priority PASSED (20 of 20)
  (check no low priority processes are running when there is high priority 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/run_high_priority.c)
- tester failed
 
-test sleep_high_priority FAILED (0 of 20)
+test sleep_high_priority PASSED (20 of 20)
  (check if low priority processes run when high priority is put to sleep 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/sleep_high_priority.c)
- tester failed
 
-test awake_high_priority FAILED (0 of 20)
+test awake_high_priority PASSED (20 of 20)
  (check if only high priority process run when high priority is awake from sleep 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/awake_high_priority.c)
- tester failed
 
-test multiple_high_priority FAILED (0 of 20)
+test multiple_high_priority PASSED (20 of 20)
  (check if multiple high priority processes run in round robin 
  The corresponding test file is at ~cs537-1/ta/tests/2b/ctests/multiple_high_priority.c)
- tester failed
 
-Passed 4 of 11 tests.
-Overall 4 of 11
-Points 40 of 180
+Passed 11 of 11 tests.
+Overall 11 of 11
+Points 180 of 180
