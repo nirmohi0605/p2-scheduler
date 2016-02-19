@@ -127,7 +127,7 @@ sys_setpri(void){
     argint(0, &pri); //get argument from user side
     
     if(!pri || (pri > 2) || (pri < 1)){
-        return -1; //incorrect priority input
+        return -1; //incorrect priority
     }
     
     proc->priority = pri;
@@ -137,5 +137,32 @@ sys_setpri(void){
 
 int
 sys_getpinfo(void){
+  struct pstat *ps;
+
+  if(argptr(0, (void*)&ps, sizeof(*ps)) < 0){
+    return -1;
+  } else{
+    if(ps == NULL){
+      return -1;
+    } else {
+      struct proc *p;
+
+      acquire(&ptable.lock);
+      int i = 0;
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        if(p->state == UNUSED){
+          ps->inuse[i] = 0;
+        } else{
+          ps->inuse[i] = 1;
+        }
+        ps->pid[i] = p->pid;
+        ps->hticks[i] = p->hticks;
+        ps->lticks[i] = p->lticks;
+        i++;
+      }
+      release(&ptable.lock);
+      return 0;
+    }
+  }
   return 0;
 }
